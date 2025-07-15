@@ -1,0 +1,21 @@
+from sqlalchemy.orm import Session
+from app.db.models.report_schedule import ReportSchedule
+from datetime import datetime
+
+def get_all_schedules(db: Session):
+    return db.query(ReportSchedule).all()
+
+def update_last_run(db: Session, schedule_id: int, ts: datetime):
+    db.query(ReportSchedule).filter(ReportSchedule.id == schedule_id).update({"last_run_timestamp": ts})
+    db.commit()
+
+def add_schedule(db: Session, **kwargs):
+    schedule = ReportSchedule(**kwargs)
+    db.add(schedule)
+    db.commit()
+    db.refresh(schedule)
+    return schedule
+
+def delete_schedule(db: Session, schedule_id: int):
+    db.query(ReportSchedule).filter(ReportSchedule.id == schedule_id).delete()
+    db.commit()

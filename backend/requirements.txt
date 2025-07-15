@@ -1,0 +1,13 @@
+# Python dependencies
+fastapi
+uvicorn
+sqlalchemy
+asyncua
+openpyxl
+reportlab
+psycopg2-binary
+setuptools>=78.1.1
+python-dotenv
+python-multipart
+
+
