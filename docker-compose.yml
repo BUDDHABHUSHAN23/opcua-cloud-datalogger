@@ -11,6 +11,8 @@ services:
       - .env
     depends_on:
       - db
+      - redis
+      - influxdb
 
   db:
     image: postgres:15
@@ -23,5 +25,40 @@ services:
     ports:
       - "5432:5432"
 
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+
+  influxdb:
+    image: influxdb:2.7
+    container_name: opc-cloud-datalogger-influxdb
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=admin123
+      - DOCKER_INFLUXDB_INIT_ORG=opclogger
+      - DOCKER_INFLUXDB_INIT_BUCKET=mainbucket
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=my-secret-token
+
+
+  celery:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: celery -A app.workers.celery_app.celery worker --loglevel=info
+    depends_on:
+      - backend
+      - redis
+      - db
+      - influxdb
+    env_file:
+      - .env
+
 volumes:
   pgdata:
+  influxdb-data:

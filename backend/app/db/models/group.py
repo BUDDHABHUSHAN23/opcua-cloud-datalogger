@@ -12,3 +12,4 @@ class Group(Base):
     schedule_type = Column(String)
     schedule_details = Column(String)
     server_id = Column(Integer, ForeignKey("servers.id"))
+    schedule_mode = Column(String, nullable=True)  # ✅ Add this line

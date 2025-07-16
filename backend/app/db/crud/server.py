@@ -1,4 +1,5 @@
-# server CRUD
+# backend/app/db/crud/server.py
+
 from sqlalchemy.orm import Session
 from app.db.models.server import Server
 
@@ -6,12 +7,18 @@ def get_all_servers(db: Session):
     return db.query(Server).all()
 
 def add_server(db: Session, name: str, endpoint_url: str):
-    server = Server(name=name, endpoint_url=endpoint_url)
-    db.add(server)
+    existing = db.query(Server).filter((Server.name == name) | (Server.endpoint_url == endpoint_url)).first()
+    if existing:
+        raise Exception("Server with same name or endpoint already exists.")
+    new_server = Server(name=name, endpoint_url=endpoint_url)
+    db.add(new_server)
     db.commit()
-    db.refresh(server)
-    return server
+    db.refresh(new_server)
+    return new_server
 
 def delete_server(db: Session, server_id: int):
-    db.query(Server).filter(Server.id == server_id).delete()
+    server = db.query(Server).filter(Server.id == server_id).first()
+    if not server:
+        raise Exception("Server not found")
+    db.delete(server)
     db.commit()

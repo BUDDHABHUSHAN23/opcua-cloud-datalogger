@@ -1,5 +1,5 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI 
+from fastapi.middleware.cors import CORSMiddleware  #  this are the Frontend 
 from app.api.routes import servers, groups, tags, reports, monitoring
 from app.db.database import engine, Base
 
