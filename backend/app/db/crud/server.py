@@ -2,6 +2,7 @@
 
 from sqlalchemy.orm import Session
 from app.db.models.server import Server
+from typing import Optional
 
 def get_all_servers(db: Session):
     return db.query(Server).all()
@@ -22,3 +23,11 @@ def delete_server(db: Session, server_id: int):
         raise Exception("Server not found")
     db.delete(server)
     db.commit()
+
+def get_server_by_id(db: Session, server_id: int) -> Optional[Server]:
+    server = db.query(Server).filter(Server.id == server_id).first()
+    if not server:
+        raise Exception("Server not found")
+    return server
+
+

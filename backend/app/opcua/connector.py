@@ -60,13 +60,17 @@ class OPCUAConnector:
                 results[node_id] = {"error": str(e)}
         return results
 
-    async def browse_root(self) -> List[str]:
-        if not self.connected:
-            await self.connect()
+    async def browse_root(self):
+        root = self.client.nodes.root
+        objects = await root.get_children()
+        result = []
+        for node in objects:
+            result.append({
+                "nodeId": node.nodeid.to_string(),
+                "displayName": str(await node.read_display_name())
+            })
+        return result
 
-        objects_node = self.client.get_objects_node()
-        children = await objects_node.get_children()
-        return [str(child) for child in children]
 
 
 # ✅ ADD THIS to support Celery imports:
