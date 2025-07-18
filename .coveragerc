@@ -1,0 +1,17 @@
+[run]
+omit =
+    */__init__.py
+    */tests/*
+    */venv/*
+    */.venv/*
+    */env/*
+    */main.py
+    */worker.py
+
+[report]
+exclude_lines =
+    pragma: no cover
+    if __name__ == .__main__.:
+    def __repr__
+    raise NotImplementedError
+    except ImportError

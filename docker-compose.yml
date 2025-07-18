@@ -68,6 +68,22 @@ services:
     depends_on:
       - backend
 
+
+  test:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: pytest tests/
+    depends_on:
+      - db
+      - redis
+      - influxdb
+    env_file:
+      - .env
+    environment:
+      - PYTHONPATH=/app
+
+
 volumes:
   pgdata:
   influxdb-data:
