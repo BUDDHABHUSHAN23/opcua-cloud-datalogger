@@ -1,0 +1,77 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.so
+*.egg-info/
+.Python
+.env
+.env.*
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# Testing
+htmlcov/
+.coverage
+.tox/
+.cache/
+pytest_cache/
+
+# Logs
+*.log
+logs/
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+
+# Docker
+**/__pycache__/
+**/*.pyc
+Dockerfile~
+docker-compose.override.yml
+docker-compose.yml~
+
+# System
+.DS_Store
+Thumbs.db
+
+# InfluxDB export/import artifacts
+*.influxdb
+influxdb_backup/
+
+# Redis and PostgreSQL volume data
+redis_data/
+pg_data/
+db_data/
+
+# Reports and temp files
+*.pdf
+*.xlsx
+*.xls
+*.tmp
+*.bak
+
+# Build
+build/
+dist/
+*.spec
+*.egg
+*.whl
+
+# Editor swap files
+*~
+*.swp
+*.swo
+
+# Coverage
+coverage.xml

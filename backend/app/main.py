@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware  #  this are the Frontend
 from app.api.routes import servers, groups, tags, reports, monitoring
 from app.db.database import engine, Base
 
+
 app = FastAPI(title="OPC UA Cloud Datalogger")
 
 # CORS

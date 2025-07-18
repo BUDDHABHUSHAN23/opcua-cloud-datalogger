@@ -12,5 +12,9 @@ python-multipart
 celery
 influxdb-client
 redis
-
-
+# --- Test dependencies ---
+pytest
+pytest-asyncio
+httpx
+pytest-cov  # if you want coverage reports later
+# --- Development dependencies ---
