@@ -1,32 +1,26 @@
-# groups route
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.db.database import SessionLocal
+from typing import List
+from app.db.database import get_db
 from app.db.crud import group as crud
+from app.schemas.group import GroupCreate, GroupUpdate, GroupOut
 
 router = APIRouter()
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-@router.get("/")
+@router.get("/", response_model=List[GroupOut])
 def list_groups(db: Session = Depends(get_db)):
     return crud.get_all_groups(db)
 
-@router.post("/")
-def create_group(payload: dict, db: Session = Depends(get_db)):
-    return crud.add_group(db, **payload)
+@router.post("/", response_model=GroupOut, status_code=201)
+def create_group(payload: GroupCreate, db: Session = Depends(get_db)):
+    return crud.add_group(db, payload.dict())
 
-@router.put("/{group_id}")
-def update_group(group_id: int, payload: dict, db: Session = Depends(get_db)):
-    crud.update_group(db, group_id, **payload)
+@router.put("/{group_id}", status_code=200)
+def update_group(group_id: int, payload: GroupUpdate, db: Session = Depends(get_db)):
+    crud.update_group(db, group_id, payload.dict())
     return {"detail": "Group updated"}
 
-@router.delete("/{group_id}")
+@router.delete("/{group_id}", status_code=200)
 def remove_group(group_id: int, db: Session = Depends(get_db)):
     crud.delete_group(db, group_id)
-    return {"detail": "Group deleted"}
+    return {"detail": "Group and associated tags deleted"}

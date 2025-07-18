@@ -1,3 +1,6 @@
 {
   "python.analysis.extraPaths": ["./backend/app"]
 }
+{
+  "python.envFile": "${workspaceFolder}/.env"
+}

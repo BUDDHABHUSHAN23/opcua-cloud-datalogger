@@ -1,21 +1,14 @@
-# group CRUD
-from sqlalchemy.orm import Session
-from app.db.models.group import Group
 
-def get_all_groups(db: Session):
-    return db.query(Group).all()
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from app.db.database import Base
 
-def add_group(db: Session, **kwargs):
-    group = Group(**kwargs)
-    db.add(group)
-    db.commit()
-    db.refresh(group)
-    return group
-
-def update_group(db: Session, group_id: int, **kwargs):
-    db.query(Group).filter(Group.id == group_id).update(kwargs)
-    db.commit()
-
-def delete_group(db: Session, group_id: int):
-    db.query(Group).filter(Group.id == group_id).delete()
-    db.commit()
+class Group(Base):
+    __tablename__ = "logging_groups"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, nullable=False)
+    description = Column(String)
+    is_enabled = Column(Boolean, default=True)
+    schedule_type = Column(String)
+    schedule_details = Column(String)
+    server_id = Column(Integer, ForeignKey("servers.id"))
+    schedule_mode = Column(String, nullable=True)  # ✅ Add this line

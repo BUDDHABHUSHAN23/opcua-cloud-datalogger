@@ -1,77 +1,57 @@
-# backend/app/api/routes/servers.py
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
+
+from app.db.database import get_db
+from app.db.models.server import Server
+from app.schemas.server import ServerCreate, ServerOut
+from app.db.crud import server as crud
 from app.opcua.connector import OPCUAConnector
-
-from app.db.database import SessionLocal
-from app.db.crud import server as crud  # Adjust import based on your project structure
-from app.db.models.server import Server  # Ensure this model is defined
-from app.schemas.server import ServerCreate, ServerOut  # Make sure these are defined
-from app.db.database import get_db   # Adjust import based on your project structure
- 
-
-from app.db.crud import server as server_crud
-
 
 router = APIRouter()
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 @router.get("/", response_model=List[ServerOut])
 def list_servers(db: Session = Depends(get_db)):
-    """List all OPC UA servers"""
     try:
-        servers = db.query(Server).all()
-        return servers
+        return crud.get_all_servers(db)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/", response_model=ServerOut)
+@router.post("/", response_model=ServerOut, status_code=201)
 def create_server(server: ServerCreate, db: Session = Depends(get_db)):
-    """Create new OPC UA server"""
     try:
         return crud.add_server(db, server.name, server.endpoint_url)
     except Exception as e:
+        if "already exists" in str(e):
+            raise HTTPException(status_code=409, detail=str(e))
         raise HTTPException(status_code=400, detail=str(e))
 
-@router.delete("/{server_id}")
+@router.delete("/{server_id}", status_code=200)
 def remove_server(server_id: int, db: Session = Depends(get_db)):
-    """Delete server by ID"""
-    crud.delete_server(db, server_id)
-    return {"detail": "Server deleted"}
+    try:
+        crud.delete_server(db, server_id)
+        return {"detail": f"Server {server_id} deleted successfully"}
+    except Exception as e:
+        if "not found" in str(e).lower():
+            raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e))
 
 @router.get("/{server_id}/browse")
 async def browse_server(server_id: int, db: Session = Depends(get_db)):
-    server = server_crud.get_server_by_id(db, server_id)
-    if not server:
-        raise HTTPException(status_code=404, detail="Server not found")
+    server = crud.get_server_by_id(db, server_id)
     try:
         connector = OPCUAConnector(server.endpoint_url)
         await connector.connect()
         nodes = await connector.browse_root()
         await connector.disconnect()
-        # return {"nodes": nodes}
-        print("[OPCUA] Browsed nodes:", nodes)
+        return {"root_nodes": nodes}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-    
 @router.get("/{server_id}/browse/{node_id}")
 async def browse_node(server_id: int, node_id: str, db: Session = Depends(get_db)):
-    """Browse children of a given node"""
-    server = server_crud.get_server_by_id(db, server_id)
-    if not server:
-        raise HTTPException(status_code=404, detail="Server not found")
-
+    server = crud.get_server_by_id(db, server_id)
     try:
-        # Normalize nodeId format
         if node_id.isdigit():
             node_id = f"i={node_id}"
 
@@ -90,6 +70,3 @@ async def browse_node(server_id: int, node_id: str, db: Session = Depends(get_db
         return {"children": result}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Browse failed: {e}")
-
-
-
