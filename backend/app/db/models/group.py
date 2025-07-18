@@ -6,6 +6,7 @@ from app.db.database import Base
 
 class Group(Base):
     __tablename__ = "logging_groups"
+    __table_args__ = {'extend_existing': True}  # ✅ add this line   # to allow redefinition
     
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, nullable=False)
