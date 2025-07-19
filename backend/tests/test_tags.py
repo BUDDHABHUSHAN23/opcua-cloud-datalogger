@@ -2,12 +2,15 @@
 # tests/test_tags.py
 
 import pytest
-from httpx import AsyncClient
+from httpx import AsyncClient, ASGITransport
 from app.main import app
+
+transport = ASGITransport(app=app, raise_app_exceptions=True)
 
 @pytest.mark.asyncio
 async def test_create_tag():
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+
         # Create Server
         server_payload = {"name": "TagTestServer", "endpoint_url": "opc.tcp://localhost:4840"}
         server_resp = await ac.post("/api/servers/", json=server_payload)
@@ -34,6 +37,7 @@ async def test_create_tag():
 
 @pytest.mark.asyncio
 async def test_get_tags():
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        # Fetch all tags
         response = await ac.get("/api/tags/")
         assert response.status_code == 200
