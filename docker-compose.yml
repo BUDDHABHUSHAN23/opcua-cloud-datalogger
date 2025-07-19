@@ -5,6 +5,8 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    environment:
+      - PYTHONPATH=/app/backend
     ports:
       - "8000:8000"
     env_file:
@@ -73,7 +75,8 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    command: pytest tests/
+    working_dir: /app                  # ✅ IMPORTANT: not /app/backend
+    command: pytest tests/ --cov=app --cov-report=term --cov-report=xml
     depends_on:
       - db
       - redis
@@ -82,6 +85,7 @@ services:
       - .env
     environment:
       - PYTHONPATH=/app
+
 
 
 volumes:
