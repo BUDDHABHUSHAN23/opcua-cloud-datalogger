@@ -13,7 +13,7 @@ def list_groups(db: Session = Depends(get_db)):
 
 @router.post("/", response_model=GroupOut, status_code=201)
 def create_group(payload: GroupCreate, db: Session = Depends(get_db)):
-    return crud.add_group(db, payload.dict())
+    return crud.create_group(db, payload)   # changed to use GroupCreate schema
 
 @router.put("/{group_id}", status_code=200)
 def update_group(group_id: int, payload: GroupUpdate, db: Session = Depends(get_db)):

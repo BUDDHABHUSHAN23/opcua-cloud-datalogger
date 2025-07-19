@@ -16,6 +16,10 @@ class Group(Base):
     schedule_details = Column(String)
     schedule_mode = Column(String, nullable=True)
     server_id = Column(Integer, ForeignKey("servers.id"))
+    mode = Column(String, nullable=False)  # ✅ Add this
+    interval = Column(Integer, nullable=True)  # ✅ REQUIRED
+
+
 
     # Optional enhancement:
     tags = relationship("Tag", back_populates="group", cascade="all, delete")

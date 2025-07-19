@@ -9,12 +9,13 @@ def update_last_run(db: Session, schedule_id: int, ts: datetime):
     db.query(ReportSchedule).filter(ReportSchedule.id == schedule_id).update({"last_run_timestamp": ts})
     db.commit()
 
-def add_schedule(db: Session, **kwargs):
-    schedule = ReportSchedule(**kwargs)
+def add_schedule(db: Session, data: dict):
+    schedule = ReportSchedule(**data)
     db.add(schedule)
     db.commit()
     db.refresh(schedule)
     return schedule
+
 
 def delete_schedule(db: Session, schedule_id: int):
     db.query(ReportSchedule).filter(ReportSchedule.id == schedule_id).delete()

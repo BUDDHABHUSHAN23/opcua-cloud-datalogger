@@ -9,6 +9,8 @@ class GroupBase(BaseModel):
     schedule_details: Optional[str]
     server_id: int
     schedule_mode: Optional[str] = None
+    interval: Optional[int] = None
+    mode: str  # ✅ Add this line
 
 class GroupCreate(GroupBase):
     pass

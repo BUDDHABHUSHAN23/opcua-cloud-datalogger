@@ -12,6 +12,8 @@ python-multipart
 celery
 influxdb-client
 redis
+asyncua
+# --- Database dependencies ---
 # --- Test dependencies ---
 pytest
 pytest-asyncio

@@ -5,6 +5,8 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    volumes:
+      - ./backend/templates:/app/templates  
     environment:
       - PYTHONPATH=/app/backend
     ports:
