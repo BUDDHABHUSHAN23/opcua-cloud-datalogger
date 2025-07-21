@@ -1,6 +1,6 @@
 # app/workers/monitor_worker.py
 
-from app.workers.celery_app import celery
+from celery_app import celery
 from app.opcua.connector import get_opcua_client
 from app.services.influx_writer import write_tag_value
 from app.db.database import SessionLocal

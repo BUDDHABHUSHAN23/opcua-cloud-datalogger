@@ -2,8 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware  #  this are the Frontend 
 from app.api.routes import servers, groups, tags, reports, monitoring , ws, control , browse  # Import your routers
 from app.db.database import engine, Base
+import logging
+logging.getLogger("asyncua").setLevel(logging.WARNING)
 
-
+# Initialize FastAPI app
 app = FastAPI(title="OPC UA Cloud Datalogger")
 
 # CORS

@@ -14,8 +14,15 @@ class ReportScheduleBase(BaseModel):
 class ReportScheduleCreate(ReportScheduleBase):
     pass
 
-class ReportScheduleOut(ReportScheduleBase):
+class ReportScheduleOut(BaseModel):   # This is the output schema for report schedules
     id: int
+    name: str
+    group_id: int
+    output_folder: str
+    report_format: str
+    template_path: str
+    schedule_type: str
+    is_enabled: bool
     last_run_timestamp: Optional[datetime]
 
     class Config:

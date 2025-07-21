@@ -1,13 +1,11 @@
-# group model
-
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from app.db.database import Base
 
 class Group(Base):
     __tablename__ = "logging_groups"
-    __table_args__ = {'extend_existing': True}  # ✅ add this line   # to allow redefinition
-    
+    __table_args__ = {'extend_existing': True}
+
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, nullable=False)
     description = Column(String)
@@ -16,10 +14,7 @@ class Group(Base):
     schedule_details = Column(String)
     schedule_mode = Column(String, nullable=True)
     server_id = Column(Integer, ForeignKey("servers.id"))
-    mode = Column(String, nullable=False)  # ✅ Add this
-    interval = Column(Integer, nullable=True)  # ✅ REQUIRED
+    mode = Column(String, nullable=False)
+    interval = Column(Integer, nullable=True)
 
-
-
-    # Optional enhancement:
     tags = relationship("Tag", back_populates="group", cascade="all, delete")

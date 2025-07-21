@@ -6,7 +6,8 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     volumes:
-      - ./backend/templates:/app/templates  
+      - ./backend/templates:/app/templates   # Mount templates directory
+      - ./backend/output:/app/output  # Mount output directory    
     environment:
       - PYTHONPATH=/app/backend
     ports:
@@ -22,7 +23,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    command: celery -A app.workers.celery_app.celery worker --loglevel=info
+    command: celery -A app.celery_app.celery worker --loglevel=info
     depends_on:
       - backend
       - redis
@@ -72,12 +73,11 @@ services:
     depends_on:
       - backend
 
-
   test:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    working_dir: /app                  # ✅ IMPORTANT: not /app/backend
+    working_dir: /app
     command: pytest tests/ --cov=app --cov-report=term --cov-report=xml
     depends_on:
       - db
@@ -88,8 +88,21 @@ services:
     environment:
       - PYTHONPATH=/app
 
-
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: opclogger-pgadmin
+    restart: always
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@opclogger.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - db
 
 volumes:
   pgdata:
   influxdb-data:
+  pgadmin_data:
