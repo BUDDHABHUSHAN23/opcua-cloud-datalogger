@@ -2,6 +2,8 @@ import pytest
 from httpx import AsyncClient
 from app.main import app
 from httpx import ASGITransport
+# ✅ CORRECT
+from tests.utils import transport
 
 transport = ASGITransport(app=app)
 @pytest.mark.asyncio

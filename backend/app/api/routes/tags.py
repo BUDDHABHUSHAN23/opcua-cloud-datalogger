@@ -5,15 +5,25 @@ from app.db.database import get_db
 from app.db.crud import tag as crud
 from app.schemas.tag import TagCreate, TagOut
 
-router = APIRouter()
+router = APIRouter(prefix="/api/tags", tags=["Tags"])
+
 
 @router.get("/{group_id}", response_model=List[TagOut])
 def list_tags(group_id: int, db: Session = Depends(get_db)):
     return crud.get_tags_for_group(db, group_id)
 
+
 @router.post("/{group_id}", status_code=201)
-def save_tags(group_id: int, tags: List[TagCreate], db: Session = Depends(get_db)):
+def save_tags_to_group(group_id: int, tags: List[TagCreate], db: Session = Depends(get_db)):
     success, message = crud.save_tags(db, group_id, [t.dict() for t in tags])
+    if not success:
+        raise HTTPException(status_code=409, detail=message)
+    return {"detail": message}
+
+
+@router.post("/", status_code=201)
+def save_tags(tags: List[TagCreate], db: Session = Depends(get_db)):
+    success, message = crud.save_tags(db, None, [t.dict() for t in tags])
     if not success:
         raise HTTPException(status_code=409, detail=message)
     return {"detail": message}

@@ -1,32 +1,48 @@
 import pytest
 from httpx import AsyncClient
-from uuid import uuid4
-from .utils import transport
+from app.main import app
+
 
 @pytest.mark.asyncio
-async def test_create_tag():
-    async with AsyncClient(transport=transport, base_url="http://test", follow_redirects=True) as ac:
-        server_payload = {
-            "name": f"TagServer_{uuid4().hex[:6]}",
-            "endpoint_url": "opc.tcp://localhost:4840"
-        }
-        await ac.post("/api/servers/", json=server_payload)
-
-        payload = {
-            "name": f"Tag_{uuid4().hex[:6]}",
-            "alias": "TagAlias",
+async def test_save_tags_without_group(test_db):
+    test_tags = [
+        {
             "server_id": 1,
-            "node_id": "ns=2;i=2",
-            "data_type": "float",
-            "mode": "monitor",
-            "sampling_rate": 5,
-            "enabled": True
+            "node_id": "ns=2;s=Test1",
+            "alias": "TestTag1",
+            "data_type": "Float",
+            "sampling_rate": 5
+        },
+        {
+            "server_id": 1,
+            "node_id": "ns=2;s=Test2",
+            "alias": "TestTag2",
+            "data_type": "Boolean",
+            "sampling_rate": 5
         }
-        response = await ac.post("/api/tags/", json=payload)
-        assert response.status_code in [200, 201, 409]
+    ]
+
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        response = await ac.post("/api/tags/", json=test_tags)
+
+    assert response.status_code in [200, 201]
+    assert "detail" in response.json()
+
 
 @pytest.mark.asyncio
-async def test_get_tags():
-    async with AsyncClient(transport=transport, base_url="http://test", follow_redirects=True) as ac:
-        response = await ac.get("/api/tags/")
-        assert response.status_code == 200
+async def test_save_tags_to_group(test_db):
+    test_tags = [
+        {
+            "server_id": 1,
+            "node_id": "ns=2;s=TestGrouped1",
+            "alias": "GroupTag1",
+            "data_type": "Float",
+            "sampling_rate": 5
+        }
+    ]
+
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        response = await ac.post("/api/tags/1", json=test_tags)
+
+    assert response.status_code in [200, 201]
+    assert "detail" in response.json()

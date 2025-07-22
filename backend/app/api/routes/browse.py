@@ -8,6 +8,8 @@ from sqlalchemy.orm import Session
 from fastapi import Depends
 from typing import List, Dict
 import logging
+from app.db import crud
+from app.opcua.connector import OPCUAConnector
 
 router = APIRouter()
 
@@ -20,25 +22,25 @@ def get_server(db: Session, server_id: int):
         raise HTTPException(status_code=404, detail="Server not found")
     return server
 
-@router.get("/servers/{server_id}/browse/{node_id}", response_model=List[Dict[str, str]])
+@router.get("/{server_id}/browse/{node_id}")
 async def browse_node(server_id: int, node_id: str, db: Session = Depends(get_db)):
-    server = get_server(db, server_id)
-    url = server.endpoint_url
-
+    server = crud.get_server_by_id(db, server_id)
     try:
-        async with Client(url=url) as client:
-            node = client.get_node(node_id)
-            children = await node.get_children()
+        if node_id.isdigit():
+            node_id = f"i={node_id}"
 
-            result = []
-            for child in children:
-                display_name = await child.read_display_name()
-                result.append({
-                    "nodeId": child.nodeid.to_string(),
-                    "displayName": display_name.Text
-                })
-            return result
-
+        connector = OPCUAConnector(server.endpoint_url)
+        await connector.connect()
+        node = connector.client.get_node(node_id)
+        children = await node.get_children()
+        result = []
+        for child in children:
+            display_name = await child.read_display_name()
+            result.append({
+                "nodeId": child.nodeid.to_string(),
+                "displayName": str(display_name)
+            })
+        await connector.disconnect()
+        return {"children": result}
     except Exception as e:
-        logger.exception(f"Failed to browse node {node_id} for server {server_id}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"Browse failed: {e}")

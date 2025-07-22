@@ -77,16 +77,19 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    working_dir: /app
-    command: pytest tests/ --cov=app --cov-report=term --cov-report=xml
+    working_dir: /app/backend
+    command: pytest                   # pytest uses pytest.ini
+    env_file:
+      - .env
+    environment:
+      - PYTHONPATH=/app/backend       # 🔥 this is key
+    volumes:
+      - ./backend:/app/backend
     depends_on:
       - db
       - redis
       - influxdb
-    env_file:
-      - .env
-    environment:
-      - PYTHONPATH=/app
+
 
   pgadmin:
     image: dpage/pgadmin4
@@ -102,7 +105,21 @@ services:
     depends_on:
       - db
 
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+    volumes:
+      - grafana-storage:/var/lib/grafana
+
+
 volumes:
   pgdata:
   influxdb-data:
   pgadmin_data:
+  grafana-storage:
+  

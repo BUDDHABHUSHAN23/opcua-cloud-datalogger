@@ -2,6 +2,8 @@ import pytest
 from httpx import ASGITransport, AsyncClient
 from app.main import app
 from uuid import uuid4
+# ✅ CORRECT
+from tests.utils import transport
 
 transport = ASGITransport(app=app)
 

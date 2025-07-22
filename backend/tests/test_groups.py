@@ -1,7 +1,11 @@
 import pytest
 from httpx import AsyncClient
 from uuid import uuid4
-from .utils import transport
+from tests.utils import transport  # ✅ Absolute import
+
+# ✅ CORRECT
+from app.main import app
+from tests.utils import transport
 
 @pytest.mark.asyncio
 async def test_create_group():
