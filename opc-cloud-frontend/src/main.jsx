@@ -10,9 +10,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>   {/* ✅ THIS IS REQUIRED */}
       <AuthProvider>
-        <ErrorBoundary>
+        
           <App />
-        </ErrorBoundary>
+      
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>

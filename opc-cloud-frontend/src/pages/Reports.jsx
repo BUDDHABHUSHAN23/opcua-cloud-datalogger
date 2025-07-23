@@ -13,7 +13,7 @@ export default function Reports() {
   const [downloadUrl, setDownloadUrl] = useState('');
 
   useEffect(() => {
-    fetch('/api/reports/groups').then(res => res.json()).then(setGroups);
+    fetch('/api/groups/').then(res => res.json()).then(setGroups);
   }, []);
 
   const handleGenerate = async () => {

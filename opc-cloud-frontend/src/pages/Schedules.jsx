@@ -13,8 +13,8 @@ export default function Schedules() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetch('/api/reports/groups').then(res => res.json()).then(setGroups);
-    fetch('/api/reports/schedules').then(res => res.json()).then(setSchedules);
+    fetch('/api/groups/').then(res => res.json()).then(setGroups);
+    fetch('/api/reports/').then(res => res.json()).then(setSchedules);
   }, []);
 
   const handleAdd = async () => {
@@ -46,7 +46,7 @@ export default function Schedules() {
       setTemplate(null);
       setIsEnabled(true);
       setError('');
-      fetch('/api/reports/schedules').then(res => res.json()).then(setSchedules);
+      fetch('/api/reports/').then(res => res.json()).then(setSchedules);
     } else {
       const err = await response.json();
       setError(err.detail || 'Failed to add schedule');
@@ -55,7 +55,7 @@ export default function Schedules() {
 
   const handleDelete = async (id) => {
     await fetch(`/api/reports/schedules/${id}`, { method: 'DELETE' });
-    fetch('/api/reports/schedules').then(res => res.json()).then(setSchedules);
+    fetch('/api/reports/').then(res => res.json()).then(setSchedules);
   };
 
   return (
