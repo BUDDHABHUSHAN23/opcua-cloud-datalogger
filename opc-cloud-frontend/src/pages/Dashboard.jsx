@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 
 export default function Dashboard() {
@@ -10,13 +9,28 @@ export default function Dashboard() {
     let socket;
     let retryTimer;
 
+    const baseWsUrl =
+      import.meta.env.DEV
+        ? 'ws://localhost:8000/api/ws/monitor'       // in DEV
+        : 'ws://backend:8000/api/ws/monitor';      // in Docker PROD
+
     const connect = () => {
-      socket = new WebSocket("ws://localhost:8000/ws/monitor");
+      socket = new WebSocket(baseWsUrl);
+
+      socket.onopen = () => {
+        socket.send(JSON.stringify({
+          server_url: "opc.tcp://192.168.5.189:62640/IntegrationObjects/ServerSimulator",
+          node_ids: ["ns=2;s=Demo.Static.Scalar.Double", "ns=2;s=Demo.Static.Scalar.Float"]
+        }));
+      };
+
       socket.onmessage = (event) => {
         setValues(JSON.parse(event.data));
         setError('');
       };
+
       socket.onerror = () => setError('WebSocket error');
+
       socket.onclose = () => {
         setError('Disconnected. Reconnecting...');
         retryTimer = setTimeout(() => {

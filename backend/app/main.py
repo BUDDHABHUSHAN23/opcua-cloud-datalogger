@@ -13,7 +13,7 @@ logging.getLogger("asyncua").setLevel(logging.WARNING)
 
 # Initialize FastAPI app
 # app = FastAPI(title="OPC UA Cloud Datalogger")
-app = FastAPI(title="OPC UA Cloud Datalogger", redirect_slashes=False)   # this is for the redirect slashes HTTP to HTTPS
+app = FastAPI(title="OPC UA Cloud Datalogger")   # this is for the redirect slashes HTTP to HTTPS
 
 
 # CORS
