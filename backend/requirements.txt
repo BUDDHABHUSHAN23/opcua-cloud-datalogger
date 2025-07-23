@@ -1,6 +1,6 @@
 # Python dependencies
 fastapi
-uvicorn
+uvicorn[standard]
 sqlalchemy
 asyncua
 openpyxl
@@ -13,6 +13,10 @@ celery
 influxdb-client
 redis
 asyncua
+python-jose[cryptography]
+passlib[bcrypt]
+email-validator
+websockets
 # --- Database dependencies ---
 # --- Test dependencies ---
 pytest

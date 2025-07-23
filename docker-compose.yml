@@ -6,8 +6,8 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     volumes:
-      - ./backend/templates:/app/templates   # Mount templates directory
-      - ./backend/output:/app/output  # Mount output directory    
+      - ./backend/templates:/app/templates
+      - ./backend/output:/app/output    
     environment:
       - PYTHONPATH=/app/backend
     ports:
@@ -69,27 +69,30 @@ services:
     ports:
       - "5173:5173"
     command: npm run dev -- --host
+    environment:
+      - VITE_API_BASE=/api
     working_dir: /app
     depends_on:
       - backend
+    extra_hosts:
+      - "backend:host-gateway"
 
   test:
     build:
       context: ./backend
       dockerfile: Dockerfile
     working_dir: /app/backend
-    command: pytest                   # pytest uses pytest.ini
+    command: pytest
     env_file:
       - .env
     environment:
-      - PYTHONPATH=/app/backend       # 🔥 this is key
+      - PYTHONPATH=/app/backend
     volumes:
       - ./backend:/app/backend
     depends_on:
       - db
       - redis
       - influxdb
-
 
   pgadmin:
     image: dpage/pgadmin4
@@ -115,7 +118,6 @@ services:
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
     volumes:
       - grafana-storage:/var/lib/grafana
-
 
 volumes:
   pgdata:

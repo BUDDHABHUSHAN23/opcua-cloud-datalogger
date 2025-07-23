@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
+from app.db.models.group import Group
 
 from app.db.database import get_db
 from app.db.models.server import Server
@@ -29,11 +30,23 @@ def create_server(server: ServerCreate, db: Session = Depends(get_db)):
 @router.delete("/{server_id}", status_code=200)
 def remove_server(server_id: int, db: Session = Depends(get_db)):
     try:
+        # Check if server exists
+        server = db.query(Server).filter(Server.id == server_id).first()
+        if not server:
+            raise HTTPException(status_code=404, detail="Server not found")
+
+        # Check if any groups are linked to this server
+        group_count = db.query(Group).filter(Group.server_id == server_id).count()
+        if group_count > 0:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Cannot delete server {server_id}: {group_count} group(s) are still linked to it."
+            )
+
         crud.delete_server(db, server_id)
         return {"detail": f"Server {server_id} deleted successfully"}
+
     except Exception as e:
-        if "not found" in str(e).lower():
-            raise HTTPException(status_code=404, detail=str(e))
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.get("/{server_id}/browse")

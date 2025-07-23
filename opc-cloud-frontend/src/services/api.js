@@ -1,14 +1,22 @@
 const API_BASE = '/api';
 
-export const fetchServers = () =>
-  fetch(`${API_BASE}/servers`).then(res => res.json());
+// services/api.js
+export const fetchServers = async () => {
+  const res = await fetch('/api/servers');
+  if (!res.ok) throw new Error("Failed to fetch servers");
+  return res.json();  // Must be a list/array
+};
 
-export const addServer = (name, endpoint_url) =>
-  fetch(`${API_BASE}/servers`, {
+export const addServer = async (name, endpoint_url) => {
+  const res = await fetch(`${API_BASE}/servers`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, endpoint_url })
-  }).then(res => res.json());
+    body: JSON.stringify({ name, endpoint_url }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.detail || "Failed to add server");
+  return { success: true, ...data };
+};
 
 export const deleteServer = (id) =>
   fetch(`${API_BASE}/servers/${id}`, { method: 'DELETE' }).then(res => res.json());

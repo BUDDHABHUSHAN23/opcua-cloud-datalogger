@@ -12,9 +12,23 @@ export default function Servers() {
     loadServers();
   }, []);
 
-  const loadServers = () => {
-    fetchServers().then(setServers).catch(() => setError('Failed to fetch servers'));
+  const loadServers = async () => {
+    try {
+      const data = await fetchServers();
+      if (Array.isArray(data)) {
+        setServers(data);
+        setError('');
+      } else {
+        console.warn("Expected array, got:", data);
+        setError("Unexpected server response.");
+        setServers([]); // prevent map() crash
+      }
+    } catch (err) {
+      console.error("Failed to fetch servers:", err);
+      setError("Failed to fetch servers");
+    }
   };
+
 
   const handleAdd = async () => {
     if (!name || !endpoint) {

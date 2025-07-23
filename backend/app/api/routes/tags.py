@@ -5,7 +5,7 @@ from app.db.database import get_db
 from app.db.crud import tag as crud
 from app.schemas.tag import TagCreate, TagOut
 
-router = APIRouter(prefix="/api/tags", tags=["Tags"])
+router = APIRouter()
 
 
 @router.get("/{group_id}", response_model=List[TagOut])
