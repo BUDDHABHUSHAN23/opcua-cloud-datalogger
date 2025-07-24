@@ -10,6 +10,7 @@ setuptools>=78.1.1
 python-dotenv
 python-multipart
 celery
+celery[redis]
 influxdb-client
 redis
 asyncua

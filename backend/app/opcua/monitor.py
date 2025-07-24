@@ -48,3 +48,4 @@ async def monitor_loop(interval_seconds=10):
             db.close()
 
         await asyncio.sleep(interval_seconds)
+    

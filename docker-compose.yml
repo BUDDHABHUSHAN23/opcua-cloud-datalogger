@@ -1,3 +1,4 @@
+
 version: "3.9"
 
 services: 
@@ -126,9 +127,22 @@ services:
     volumes:
       - grafana-storage:/var/lib/grafana
 
+  beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: celery -A app.celery_app.celery beat --loglevel=info
+    volumes:
+      - ./backend:/app/backend
+    depends_on:
+      - redis
+      - db
+      - influxdb
+    env_file:
+      - .env
+
 volumes:
   pgdata:
   influxdb-data:
   pgadmin_data:
   grafana-storage:
-  

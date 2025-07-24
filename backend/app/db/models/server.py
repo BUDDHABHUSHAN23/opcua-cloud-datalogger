@@ -4,10 +4,9 @@ from app.db.database import Base
 
 class Server(Base):
     __tablename__ = "servers"
-
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
-    endpoint = Column(String, nullable=False)
+    name = Column(String, unique=True, nullable=False)
+    endpoint_url = Column(String, unique=True, nullable=False)  # ✅ Correct
 
     # ✅ Add this line
     tags = relationship("Tag", back_populates="server")
