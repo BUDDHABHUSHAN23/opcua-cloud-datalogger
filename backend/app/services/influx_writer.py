@@ -1,24 +1,41 @@
+# app/services/influx_writer.py
+
 from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
 import os
-from dotenv import load_dotenv
+import logging
 
-load_dotenv()
+# Load from .env or set defaults
+INFLUXDB_URL = os.getenv("INFLUXDB_URL", "http://localhost:8086")
+INFLUXDB_TOKEN = os.getenv("INFLUXDB_TOKEN", "admin123")
+INFLUXDB_ORG = os.getenv("INFLUXDB_ORG", "my-org")
+INFLUXDB_BUCKET = os.getenv("INFLUXDB_BUCKET", "opcloggerdb")
 
-INFLUX_URL = os.getenv("INFLUXDB_URL", "http://localhost:8086")
-INFLUX_TOKEN = os.getenv("INFLUXDB_TOKEN")
-INFLUX_ORG = os.getenv("INFLUXDB_ORG")
-INFLUX_BUCKET = os.getenv("INFLUXDB_BUCKET", "opclogger")
-
-client = InfluxDBClient(url=INFLUX_URL, token=INFLUX_TOKEN, org=INFLUX_ORG)
+client = InfluxDBClient(
+    url=INFLUXDB_URL,
+    token=INFLUXDB_TOKEN,
+    org=INFLUXDB_ORG
+)
 write_api = client.write_api(write_options=SYNCHRONOUS)
 
-def write_tag_value(tag_name: str, value: float, timestamp, server_id: int):
-    point = (
-        Point("opc_tag")
-        .tag("tag", tag_name)
-        .tag("server_id", str(server_id))
-        .field("value", value)
-        .time(timestamp, WritePrecision.NS)
-    )
-    write_api.write(bucket=INFLUX_BUCKET, org=INFLUX_ORG, record=point)
+async def log_data_to_influx(records: list):
+    if not records:
+        return
+
+    try:
+        points = []
+        for record in records:
+            p = (
+                Point(record["measurement"])
+                .tag("group", record["tags"]["group"])
+                .tag("alias", record["tags"]["alias"])
+                .tag("node_id", record["tags"]["node_id"])
+                .field("value", record["fields"]["value"])
+                .time(record["time"], WritePrecision.NS)
+            )
+            points.append(p)
+
+        write_api.write(bucket=INFLUXDB_BUCKET, org=INFLUXDB_ORG, record=points)
+        logging.info(f"✅ Wrote {len(points)} points to InfluxDB.")
+    except Exception as e:
+        logging.error(f"❌ Failed to write to InfluxDB: {e}")

@@ -5,6 +5,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    restart: always
     volumes:
       - ./backend/templates:/app/templates
       - ./backend/output:/app/output    
@@ -23,6 +24,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    restart: always
     command: celery -A app.celery_app.celery worker --loglevel=info
     depends_on:
       - backend
@@ -38,6 +40,7 @@ services:
       POSTGRES_DB: opclogger
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+    restart: always
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
@@ -51,6 +54,7 @@ services:
   influxdb:
     image: influxdb:2.7
     container_name: opc-cloud-datalogger-influxdb
+    restart: always
     ports:
       - "8086:8086"
     volumes:
@@ -69,6 +73,7 @@ services:
     ports:
       - "5173:5173"
     command: npm run dev -- --host
+    restart: always
     environment:
       - VITE_BACKEND_URL=http://backend:8000
       - VITE_INFLUXDB_URL=http://influxdb:8086
@@ -111,6 +116,7 @@ services:
 
   grafana:
     image: grafana/grafana
+    restart: always 
     ports:
       - "3000:3000"
     environment:

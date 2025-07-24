@@ -8,8 +8,8 @@ class ServerBase(BaseModel):
     endpoint_url: str
 
 
-class ServerCreate(ServerBase):
-    pass
+class ServerCreate(ServerBase):        # Schema for creating a new server
+    pass  
 
 
 class ServerOut(ServerBase):

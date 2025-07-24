@@ -30,11 +30,13 @@ async def live_data_publisher():
         db = SessionLocal()
         enabled_groups = [g for g in group_crud.get_all_groups(db) if g.is_enabled]
         server_tag_map = defaultdict(list)
+        all_data = []  # ✅ Moved up here before usage
+
         for group in enabled_groups:
             tags = tag_crud.get_tags_for_group(db, group.id)
             for tag in tags:
                 server_tag_map[group.server_id].append((group.name, tag))
-        all_data = []
+
         for server_id, entries in server_tag_map.items():
             client = await get_opc_client(server_id)
             if not client:
@@ -58,6 +60,10 @@ async def live_data_publisher():
                         "group": group_name,
                         "timestamp": datetime.now().isoformat()
                     })
+
+        # print("🔁 live_data_publisher running...")
+        # print(f"✅ Sending {len(all_data)} tag values to clients...")
+
         db.close()
         await manager.broadcast(json.dumps(all_data))
         await asyncio.sleep(5)

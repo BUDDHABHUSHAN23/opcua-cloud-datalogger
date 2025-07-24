@@ -67,7 +67,8 @@ class OPCUAConnector:
         for node in objects:
             result.append({
                 "nodeId": node.nodeid.to_string(),
-                "displayName": str(await node.read_display_name())
+                "displayName": str(await node.read_display_name()),
+                "type": str(await node.read_node_class())
             })
         return result
 
