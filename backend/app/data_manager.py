@@ -6,6 +6,7 @@ from app.db.models.tag import Tag
 from app.db.models.server import Server
 from app.db.models.report_schedule import Report
 from app.db.models.log import LogData
+
 from datetime import datetime
 import logging
 
@@ -17,6 +18,7 @@ def get_all_logging_groups():
         return db.query(Group).filter(Group.is_active == True).all()
     finally:
         db.close()
+
 
 def get_tags_for_group(group_id: int):
     db = SessionLocal()

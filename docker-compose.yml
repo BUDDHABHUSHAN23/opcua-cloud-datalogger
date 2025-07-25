@@ -48,7 +48,7 @@ services:
       - "5432:5432"
 
   redis:
-    image: redis
+    image: redis:7.4.5
     ports:
       - "6379:6379"
 
@@ -102,7 +102,7 @@ services:
       - influxdb
 
   pgadmin:
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:9.6
     container_name: opclogger-pgadmin
     restart: always
     ports:
@@ -116,7 +116,7 @@ services:
       - db
 
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:10.4.4
     restart: always 
     ports:
       - "3000:3000"

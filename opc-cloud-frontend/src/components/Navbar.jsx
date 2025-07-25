@@ -9,6 +9,8 @@ export default function Navbar() {
       <Link to="/tags" className="hover:underline">Tags</Link>
       <Link to="/reports" className="hover:underline">Reports</Link>
       <Link to="/schedules" className="hover:underline">Schedules</Link>
+      <Link to="/monitor" className="hover:underline">Monitor</Link>
+      <Link to="/tag-tree" className="hover:underline">Tag Tree</Link>
     </nav>
   );
 }

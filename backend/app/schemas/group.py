@@ -1,7 +1,8 @@
 from pydantic import BaseModel
 from typing import Optional
 
-class GroupBase(BaseModel):
+class GroupBase(BaseModel):      # USED in GroupCreate and GroupUpdate
+    """Base schema for Group."""
     name: str
     description: Optional[str] = None
     is_enabled: bool = True
@@ -12,14 +13,20 @@ class GroupBase(BaseModel):
     interval: Optional[int] = None
     mode: str  # ✅ Add this line
 
-class GroupCreate(GroupBase):
+class GroupCreate(GroupBase):      # USED in GroupCreate
+    """Schema for Group creation."""
     pass
 
-class GroupUpdate(GroupBase):
+class GroupUpdate(GroupBase):      # USED in GroupUpdate
+    """Schema for Group update."""
     pass
 
-class GroupOut(GroupBase):
+class GroupOut(GroupBase):        # USED in GroupOut
+    """Schema for Group output."""
     id: int
 
-    class Config:
+    class Config:                 # USED in GroupOut
+        """Pydantic configuration."""
         from_attributes = True
+
+        

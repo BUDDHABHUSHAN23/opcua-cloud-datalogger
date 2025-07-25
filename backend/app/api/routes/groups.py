@@ -24,3 +24,10 @@ def update_group(group_id: int, payload: GroupUpdate, db: Session = Depends(get_
 def remove_group(group_id: int, db: Session = Depends(get_db)):
     crud.delete_group(db, group_id)
     return {"detail": "Group and associated tags deleted"}
+
+@router.get("/{group_id}", response_model=GroupOut)
+def get_group(group_id: int, db: Session = Depends(get_db)):
+    group = crud.get_group_by_id(db, group_id)
+    if not group:
+        raise HTTPException(status_code=404, detail="Group not found")
+    return group    

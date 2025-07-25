@@ -7,7 +7,7 @@ from app.services.auth import verify_password, create_access_token
 
 router = APIRouter()
 
-@router.post("/login")
+# @router.post("/login")
 @router.post("/login/")  # ✅ Accepts with or without slash
 def login_user(data: LoginRequest, db: Session = Depends(get_db)):
     print(f"🔐 Login attempt: {data.email}")

@@ -16,6 +16,8 @@ export default function Layout({ children }) {
           <Link to="/tags" className="hover:underline">Tags</Link>
           <Link to="/reports" className="hover:underline">Reports</Link>
           <Link to="/schedules" className="hover:underline">Schedules</Link>
+          <Link to="/monitor" className="hover:underline">Monitor</Link>
+          <Link to="/tag-tree" className="hover:underline">Tag Tree</Link>
         </div>
         <button onClick={logout} className="hover:underline">Logout</button>
       </nav>

@@ -10,6 +10,7 @@ import Reports from './pages/Reports';
 import Schedules from './pages/Schedules';
 import Login from './pages/Login';
 import TagMonitor from './pages/TagMonitor';
+import TagTreeBrowser from './pages/TagTreeBrowser';
 
 export default function App() {
   return (
@@ -30,6 +31,7 @@ export default function App() {
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/schedules" element={<Schedules />} />
                 <Route path="/monitor" element={<TagMonitor />} />
+                <Route path="/tag-tree" element={<TagTreeBrowser />} />
               </Routes>
             </Layout>
           </ProtectedRoute>

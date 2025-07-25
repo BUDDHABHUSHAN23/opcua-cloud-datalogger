@@ -47,5 +47,6 @@ def create_point(server_name, tag_name, value, timestamp=None):
     )
 
 def write_tag_value(server_name, tag_name, value, timestamp=None):
+    
     point = create_point(server_name, tag_name, value, timestamp)
     log_data_to_influx([point])
